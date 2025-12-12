@@ -138,14 +138,13 @@ Powerful telegram bot that scrape Posters from multiple OTT platforms & Bypass d
 Before starting, ensure you have:
 - Docker installed ([Installation Guide](https://docs.docker.com/engine/install/))
 - Docker Compose installed ([Installation Guide](https://docs.docker.com/compose/install/))
-- Git installed
 
 ### Installation Steps
 
 1. **Clone the Repository**
    ```bash
-   git clone https://github.com/XalFH/Poster-Scraper-Bot
-   cd Poster-Scraper-Bot
+   git clone https://github.com/XalFH/Poster-Scraper-Bot psb
+   cd psb
    ```
 
 2. **Setup Configuration File**
@@ -162,8 +161,6 @@ Before starting, ensure you have:
    BOT_TOKEN=your_bot_token
    DATABASE_URL=your_mongodb_url
    OWNER_ID=your_telegram_user_id
-   UPSTREAM_REPO=https://github.com/XalFH/Poster-Scraper-Bot
-   UPSTREAM_BRANCH=main
    ```
    
    Save and exit (`Ctrl + X`, then `Y`, then `Enter`)
@@ -222,7 +219,7 @@ docker-compose down -v
 
 2. **Clone Repository & switch to deploy branch**
    ```bash
-   git clone https://github.com/XalFH/Poster-Scraper-Bot && cd Poster-Scraper-Bot && git checkout deploy
+   git clone https://github.com/XalFH/Poster-Scraper-Bot psb && cd psb && git checkout deploy
    ```
 
 3. **Create config.env file**
