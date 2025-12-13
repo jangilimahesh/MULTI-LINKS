@@ -1,6 +1,6 @@
 import os
 from http.server import BaseHTTPRequestHandler as a, HTTPServer as b
-PORT = int(os.environ.get("PORT", 8080))
+PORT = int(os.environ.get("PORT", 8000))
 class A(a):
     def do_GET(self):
         body = b"@EchoBotz"
