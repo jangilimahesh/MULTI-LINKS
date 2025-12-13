@@ -16,7 +16,7 @@ from ..helper.utils.filters import CustomFilters
 
 
 def add_plugs():
-    EchoBot.bot.add_handler()(
+    EchoBot.add_handler(
         MessageHandler(
             _strt,
             filters.command(BotCommands.StartCommand, case_sensitive=True)
