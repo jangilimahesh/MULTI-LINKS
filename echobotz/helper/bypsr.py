@@ -226,58 +226,82 @@ def _bp_norm(data, service):
         "links": links_clean,
         "service": service,
     }
-    
+
 async def _bp_info(cmd_name, target_url):
     service = _bp_srv(cmd_name)
     if not service:
         return None, "Unknown platform for this command."
+
     base = _BYPASS_ENDPOINTS.get(service)
     if not base:
         return None, "Bypass endpoint not configured for this service."
+
     try:
         parsed = urlparse(target_url)
         if not parsed.scheme or not parsed.netloc:
             return None, "Invalid URL."
     except Exception:
         return None, "Invalid URL."
-    if service == "transfer_it":
-        api_url = base
-    else:
-        api_url = f"{base}{quote_plus(target_url)}"
+
+    api_url = base if service == "transfer_it" else f"{base}{quote_plus(target_url)}"
     LOGGER.info(f"Bypassing via [{service}] -> {api_url}")
+
     try:
         if service == "transfer_it":
             resp = await _sync_to_async(
                 requests.post, api_url, json={"url": target_url}, timeout=20
             )
         else:
-            resp = await _sync_to_async(requests.get, api_url, timeout=20)
+            resp = await _sync_to_async(
+                requests.get, api_url, timeout=20
+            )
     except Exception as e:
         LOGGER.error(f"Bypass HTTP error: {e}", exc_info=True)
         return None, "Failed to reach bypass service."
+
     if resp.status_code != 200:
         LOGGER.error(f"Bypass API returned {resp.status_code}: {resp.text[:200]}")
         return None, "Bypass service error."
+
     try:
         data = resp.json()
     except json.JSONDecodeError as e:
         LOGGER.error(f"Bypass JSON parse error: {e}")
         return None, "Invalid response from bypass service."
+
     if not isinstance(data, dict):
         return None, "Unexpected response from bypass service."
+
+    if "success" in data and not data.get("success"):
+        return None, data.get("message") or "Bypass failed."
+
     if service == "transfer_it":
         direct = data.get("url")
         if not direct:
             return None, "File Expired or File Not Found"
+
         fake = {
             "title": "N/A",
             "filesize": "N/A",
             "format": "N/A",
             "links": {"Direct Link": str(direct)},
         }
-        norm = _bp_norm(fake, service)
-        return norm, None
-    if "success" in data and not data.get("success"):
-        return None, data.get("message") or "Bypass failed."
+        return _bp_norm(fake, service), None
+
+    if service == "hblinks":
+        direct = data.get("url")
+        if not direct:
+            return None, "File Expired or Link Not Found"
+
+        fake = {
+            "title": "N/A",
+            "filesize": "N/A",
+            "format": "N/A",
+            "links": {
+                data.get("provider", "Direct Link"): str(direct)
+            },
+        }
+        return _bp_norm(fake, service), None
+        
     norm = _bp_norm(data, service)
-    return norm, None 
+    return norm, None
