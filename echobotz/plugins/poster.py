@@ -21,7 +21,7 @@ async def _poster_cmd(client, message):
         target = _extract_url_from_message(message)
 
         if not target:
-            return await send_message(message, "<b>Usage:</b>\n" f"/{cmd_name} &lt;ott-url&gt;  <i>or</i>\n" f"Reply to a URL with <code>/{cmd_name}</code>")
+            return await send_message(message, "<b>Usage:</b>\n" f"/{cmd} &lt;ott-url&gt;  <i>or</i>\n" f"Reply to a URL with <code>/{cmd}</code>")
         wait_msg = await send_message(message, f"<i>Fetching poster for:</i>\n<code>{target_url}</code>")
         info, err = await _fetch_ott_info(cmd, target)
         if err:
